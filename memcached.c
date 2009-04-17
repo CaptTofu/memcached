@@ -2362,10 +2362,8 @@ static void server_stats(ADD_STAT add_stats, conn *c) {
     struct slab_stats slab_stats;
     slab_stats_aggregate(&thread_stats, &slab_stats);
 
-#ifndef WIN32
     struct rusage usage;
     getrusage(RUSAGE_SELF, &usage);
-#endif /* !WIN32 */
 
     STATS_LOCK();
 
@@ -2375,14 +2373,12 @@ static void server_stats(ADD_STAT add_stats, conn *c) {
     APPEND_STAT("version", "%s", VERSION);
     APPEND_STAT("pointer_size", "%d", (int)(8 * sizeof(void *)));
 
-#ifndef WIN32
     append_stat("rusage_user", add_stats, c, "%ld.%06ld",
                 (long)usage.ru_utime.tv_sec,
                 (long)usage.ru_utime.tv_usec);
     append_stat("rusage_system", add_stats, c, "%ld.%06ld",
                 (long)usage.ru_stime.tv_sec,
                 (long)usage.ru_stime.tv_usec);
-#endif /* !WIN32 */
 
     APPEND_STAT("curr_connections", "%u", stats.curr_conns - 1);
     APPEND_STAT("total_connections", "%u", stats.total_conns);
@@ -4046,6 +4042,9 @@ static void usage(void) {
            "-s <file>     UNIX socket path to listen on (disables network support)\n"
            "-a <mask>     access mask for UNIX socket, in octal (default: 0700)\n"
            "-l <ip_addr>  interface to listen on (default: INADDR_ANY, all addresses)\n"
+           "-s <file>     unix socket path to listen on (disables network support)\n"
+           "-a <mask>     access mask for unix socket, in octal (default 0700)\n"
+           "-l <ip_addr>  interface to listen on, default is INADDR_ANY\n"
            "-d            run as a daemon\n"
            "-r            maximize core file limit\n"
            "-u <username> assume identity of <username> (only when run as root)\n"
@@ -4303,7 +4302,7 @@ int main (int argc, char **argv) {
           "L"   /* Large memory pages */
           "R:"  /* max requests per event */
           "C"   /* Disable use of CAS */
-          "b:"  /* backlog queue limit */
+          "b:"   /* backlog queue limit */
           "B:"  /* Binding protocol */
           "I:"  /* Max item size */
           "S"   /* Sasl ON */
@@ -4644,7 +4643,11 @@ int main (int argc, char **argv) {
             }
         }
 
+#ifndef WIN32
         errno = 0;
+#else /* !WIN32 */
+    _set_errno(0);
+#endif /* WIN32 */
         if (settings.port && server_socket(settings.port, tcp_transport,
                                            portnumber_file)) {
             vperror("failed to listen on TCP port %d", settings.port);
@@ -4660,7 +4663,11 @@ int main (int argc, char **argv) {
         udp_port = settings.udpport ? settings.udpport : settings.port;
 
         /* create the UDP listening socket and bind it */
+#ifndef WIN32
         errno = 0;
+#else /* !WIN32 */
+    _set_errno(0);
+#endif /* WIN32 */
         if (settings.udpport && server_socket(settings.udpport, udp_transport,
                                               portnumber_file)) {
             vperror("failed to listen on UDP port %d", settings.udpport);
