@@ -33,19 +33,6 @@ typedef char *caddr_t;
 
 #define IOV_MAX 1024
 struct iovec {
-<<<<<<< HEAD:win32/win32.h
-	u_long iov_len;
-	char FAR* iov_base;
-};
-struct msghdr
-{
-	void	*msg_name;			/* Socket name			*/
-	int		 msg_namelen;		/* Length of name		*/
-	struct iovec *msg_iov;		/* Data blocks			*/
-	int		 msg_iovlen;		/* Number of blocks		*/
-	void	*msg_accrights;		/* Per protocol magic (eg BSD file descriptor passing) */
-	int		 msg_accrightslen;	/* Length of rights list */
-=======
     u_long iov_len;
     char FAR* iov_base;
 };
@@ -57,7 +44,6 @@ struct msghdr {
     int          msg_iovlen;        /* Number of blocks        */
     void         *msg_accrights;    /* Per protocol magic (eg BSD file descriptor passing) */
     int          msg_accrightslen;  /* Length of rights list */
->>>>>>> Add support for MinGW compiler.:win32/win32.h
 };
 
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
@@ -163,42 +149,6 @@ static inline size_t mem_write(int s, void *buf, size_t len)
 
 static inline size_t mem_read(int s, void *buf, size_t len)
 {
-<<<<<<< HEAD:win32/win32.h
-	DWORD flags = 0;
-	DWORD dwBufferCount;
-	WSABUF wsabuf = { len, (char *)buf };
-	if(WSARecv((SOCKET)s,
-		&wsabuf,
-		1,
-		&dwBufferCount,
-		&flags,
-		NULL,
-		NULL
-	) == 0) {
-		return dwBufferCount;
-	}
-	if(WSAGetLastError() == WSAECONNRESET) return 0;
-	return -1;
-}
-
-inline int sendmsg(int s, const struct msghdr *msg, int flags)
-{
-	DWORD dwBufferCount;
-	if(WSASendTo((SOCKET) s,
-		(LPWSABUF)msg->msg_iov,
-		(DWORD)msg->msg_iovlen,
-		&dwBufferCount,
-		flags,
-		msg->msg_name,
-		msg->msg_namelen,
-		NULL,
-		NULL
-	) == 0) {
-		return dwBufferCount;
-	}
-	if(WSAGetLastError() == WSAECONNRESET) return 0;
-	return -1;
-=======
     DWORD flags = 0;
     DWORD dwBufferCount;
     WSABUF wsabuf = { len, (char *)buf };
@@ -218,7 +168,6 @@ inline int sendmsg(int s, const struct msghdr *msg, int flags)
         if (error == WSAECONNRESET) return 0;
         mapErr(error);
     return -1;
->>>>>>> Add support for MinGW compiler.:win32/win32.h
 }
 
 static inline int sendmsg(int s, const struct msghdr *msg, int flags)
@@ -244,24 +193,6 @@ static inline int sendmsg(int s, const struct msghdr *msg, int flags)
     return -1;
 }
 
-<<<<<<< HEAD:win32/win32.h
-#if _MSC_VER < 1300
-#define strtoll(p, e, b) ((*(e) = (char*)(p) + (((b) == 10) ? strspn((p), "0123456789") : 0)), _atoi64(p))
-#else
-#define strtoll(p, e, b) _strtoi64(p, e, b)
-#endif
-
-
-#ifndef snprintf
-#define snprintf _snprintf
-#endif
-
-// The next three lines commented out and replaced with the single following declaration. Ashok Ambati - 04/03/2008
-//#ifndef strtoull
-//#define strtoull strtoul
-//#endif
-=======
->>>>>>> Add support for MinGW compiler.:win32/win32.h
 unsigned __int64 strtoull(const char *p,char **pend,int base);
 
 int createLocalListSock(struct sockaddr_in *saddr);
