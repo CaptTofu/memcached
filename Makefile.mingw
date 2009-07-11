@@ -1,0 +1,66 @@
+# Linux, cross compile
+#CC := i386-mingw32msvc-gcc
+# Windows
+CC := mingw32-gcc
+
+memcached_exe := memcached.exe
+#testapp_obj := testapp.exe
+
+all: configh ${memcached_exe}
+
+memcached_objs := assoc.o cache.o globals.o hash.o items.o
+memcached_objs += memcached.o slabs.o thread.o util.o
+memcached_objs += stats.o
+memcached_objs += win32/defs.o win32/ntservice.o win32/win32.o
+memcached_objs += win32/dlfcn.o
+#memcached_objs += testapp.o
+
+memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
+memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
+memcached_cflags += -Wmissing-declarations -Wredundant-decls
+memcached_cflags += -I../memcached_win32_deps
+memcached_cflags += -Iwin32 -DHAVE_CONFIG_H
+
+memcached_ldflags := -L../memcached_win32_deps
+memcached_ldflags += -levent
+memcached_ldflags += -lwsock32
+memcached_ldflags += -lws2_32
+memcached_ldflags += memcached_pthreadGC2.dll
+
+## since we have our own memcached_pthreadGC2.dll to avoid name conflicts,
+## we do not specify another -lpthread
+# memcached_ldflags += -lpthread
+#testapp_ldflags := ${memcached_ldflags}
+
+configh: 
+	./win32/config.pl
+
+%.o: %.c
+	${CC} ${memcached_cflags} -MD -c $< -o $@
+
+-include ${memcached_objs:.o=.d}
+
+${memcached_exe}: ${memcached_objs}
+	${CC} -o ${memcached_exe} ${memcached_objs} ${memcached_ldflags}
+
+#rm -f ${testapp_objs:.o=.d} ${testapp_objs} ${testapp_obj}
+clean:
+	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_exe}
+	rm -rf memcached_win32
+	rm -rf memcached_win32*.tar.gz
+	rm -rf memcached_win32*.zip
+
+bdist: ${memcached_exe}
+	rm -rf memcached_win32
+	mkdir memcached_win32
+	cp ${memcached_exe} memcached_win32
+	cp memcached_pthreadGC2.dll memcached_win32
+	tar -czvf memcached_win32-`git describe`.tar.gz memcached_win32
+	rm -rf memcached_win32
+
+zdist: ${memcached_exe}
+	rm -rf memcached_win32
+	mkdir memcached_win32
+	cp ${memcached_exe} memcached_win32
+	cp memcached_pthreadGC2.dll memcached_win32
+	zip -r memcached_win32-`git describe`.zip memcached_win32

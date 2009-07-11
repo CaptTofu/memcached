@@ -1,4 +1,5 @@
 # Keep the entries sorted to reduce the risk for a merge conflict
+*.d
 *.[ao]
 *.gcda
 *.gcno
@@ -31,8 +32,11 @@
 /libtool
 /ltmain.sh
 /m4/version.m4
+/version.m4
 /memcached
 /memcached-*.tar.gz
+/memcached-*.zip
+memcached_*.tar.gz
 /memcached-debug
 /memcached-debug.profile
 /memcached.spec
@@ -49,3 +53,4 @@ Makefile.in
 TAGS
 cscope.out
 tags
+*~

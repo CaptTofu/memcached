@@ -28,7 +28,6 @@
  *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma comment(lib, "advapi32.lib")
 #include "config.h"
 #include "ntservice.h"
 
@@ -52,7 +51,7 @@ void ServiceSetFunc(svcFunc runFunc, svcFunc pauseFunc, svcFunc continueFunc, sv
 	stopServer = stopFunc;
 }
 
-void WINAPI ServiceControlHandler(DWORD controlCode)
+static void WINAPI ServiceControlHandler(DWORD controlCode)
 {
     switch(controlCode) {
         case SERVICE_CONTROL_SHUTDOWN:
@@ -87,7 +86,7 @@ void WINAPI ServiceControlHandler(DWORD controlCode)
     SetServiceStatus(serviceStatusHandle, &serviceStatus);
 }
 
-void WINAPI ServiceMain(DWORD dwNumServicesArgs, LPSTR *lpServiceArgVectors)
+static void WINAPI ServiceMain(DWORD dwNumServicesArgs, LPSTR *lpServiceArgVectors)
 {
     /* initialise service status */
     serviceStatus.dwServiceType = SERVICE_WIN32;
@@ -124,7 +123,7 @@ void WINAPI ServiceMain(DWORD dwNumServicesArgs, LPSTR *lpServiceArgVectors)
     }
 }
 
-int ServiceWait(SC_HANDLE service, DWORD pending, DWORD complete)
+static int ServiceWait(SC_HANDLE service, DWORD pending, DWORD complete)
 {
     SERVICE_STATUS serviceStatus;
     int counter = 0;
@@ -136,7 +135,7 @@ int ServiceWait(SC_HANDLE service, DWORD pending, DWORD complete)
     return (serviceStatus.dwCurrentState == complete);
 }
 
-int ServiceRun()
+int ServiceRun(void)
 {
     SERVICE_TABLE_ENTRY serviceTable[] =
     {
@@ -148,7 +147,7 @@ int ServiceRun()
 	return 0;
 }
 
-int ServiceInstall()
+int ServiceInstall(void)
 {
     int ok = 0;
     SC_HANDLE service;
@@ -177,7 +176,7 @@ int ServiceInstall()
     return ok;
 }
 
-int ServiceUninstall()
+int ServiceUninstall(void)
 {
     int ok = 0;
     SC_HANDLE service;
@@ -200,7 +199,7 @@ int ServiceUninstall()
     return ok;
 }
 
-int ServiceStart()
+int ServiceStart(void)
 {
     int ok = 0;
     SC_HANDLE service;
@@ -225,7 +224,7 @@ int ServiceStart()
     return ok;
 }
 
-int ServiceStop()
+int ServiceStop(void)
 {
     int ok = 0;
     SC_HANDLE service;
@@ -250,7 +249,7 @@ int ServiceStop()
     return ok;
 }
 
-int ServiceRestart()
+int ServiceRestart(void)
 {
     int ok = 0;
     SC_HANDLE service;

@@ -1,0 +1,51 @@
+Only in libevent-2.0.3-alpha.win64: .deps
+Only in libevent-2.0.3-alpha.win64: Makefile
+Only in libevent-2.0.3-alpha.win64: config.h
+Only in libevent-2.0.3-alpha.win64: config.log
+Only in libevent-2.0.3-alpha.win64: config.status
+Only in libevent-2.0.3-alpha.win64: event-config.h
+Only in libevent-2.0.3-alpha.win64/include: Galbraith
+Only in libevent-2.0.3-alpha.win64/include: Makefile
+Only in libevent-2.0.3-alpha.win64: libevent-2.0.3-alpha
+diff -ur libevent-2.0.3-alpha/libevent.pc libevent-2.0.3-alpha.win64/libevent.pc
+--- libevent-2.0.3-alpha/libevent.pc	2009-11-19 19:12:10 -0500
++++ libevent-2.0.3-alpha.win64/libevent.pc	2009-12-11 17:44:15 -0500
+@@ -11,6 +11,6 @@
+ Requires:
+ Conflicts:
+ Libs: -L${libdir} -levent
+-Libs.private: 
++Libs.private: -lws2_32 
+ Cflags: -I${includedir}
+ 
+Only in libevent-2.0.3-alpha.win64: libtool
+diff -ur libevent-2.0.3-alpha/log.c libevent-2.0.3-alpha.win64/log.c
+--- libevent-2.0.3-alpha/log.c	2009-11-07 13:12:14 -0500
++++ libevent-2.0.3-alpha.win64/log.c	2009-12-11 17:55:27 -0500
+@@ -101,7 +101,7 @@
+ }
+ 
+ void
+-event_sock_err(int eval, evutil_socket_t sock, const char *fmt, ...)
++event_sock_err(int eval, int sock, const char *fmt, ...)
+ {
+ 	va_list ap;
+ 	int err = evutil_socket_geterror(sock);
+Only in libevent-2.0.3-alpha.win64/sample: Makefile
+diff -ur libevent-2.0.3-alpha/select.c libevent-2.0.3-alpha.win64/select.c
+--- libevent-2.0.3-alpha/select.c	2009-11-07 13:12:14 -0500
++++ libevent-2.0.3-alpha.win64/select.c	2009-12-11 18:07:06 -0500
+@@ -168,7 +168,11 @@
+ 	event_debug(("%s: select reports %d", __func__, res));
+ 
+ 	check_selectop(sop);
++#ifndef WIN32
+ 	i = random() % (nfds+1);
++#else
++	i = rand() % (nfds+1);
++#endif
+ 	for (j = 0; j <= nfds; ++j) {
+ 		if (++i >= nfds+1)
+ 			i = 0;
+Only in libevent-2.0.3-alpha.win64: stamp-h1
+Only in libevent-2.0.3-alpha.win64/test: Makefile

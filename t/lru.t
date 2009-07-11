@@ -12,7 +12,10 @@ my $sock = $server->sock;
 
 # create a big value for the largest slab
 my $max = 1024 * 1024;
-my $big = 'x' x (1024 * 1024 - 250);
+my $big = "a big value that's > .5M and < 1M. ";
+while (length($big) * 2 < $max) {
+    $big = $big . $big;
+}
 
 ok(length($big) > 512 * 1024);
 ok(length($big) < 1024 * 1024);

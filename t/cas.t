@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-use Test::More tests => 43;
+use Test::More tests => 30;
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 use MemcachedTest;
@@ -15,22 +15,6 @@ my @result;
 my @result2;
 
 ok($sock != $sock2, "have two different connections open");
-
-sub check_args {
-    my ($line, $name) = @_;
-
-    my $svr = new_memcached();
-    my $s = $svr->sock;
-
-    print $s $line;
-    is(scalar <$s>, "CLIENT_ERROR bad command line format\r\n", $name);
-    undef $svr;
-}
-
-check_args "cas bad blah 0 0 0\r\n\r\n", "bad flags";
-check_args "cas bad 0 blah 0 0\r\n\r\n", "bad exp";
-check_args "cas bad 0 0 blah 0\r\n\r\n", "bad cas";
-check_args "cas bad 0 0 0 blah\r\n\r\n", "bad size";
 
 # gets foo (should not exist)
 print $sock "gets foo\r\n";
@@ -102,7 +86,7 @@ ok($foo1_cas != $foo2_cas,"foo1 != foo2 single-gets success");
 print $sock "gets foo1 foo2\r\n";
 ok(scalar <$sock> =~ /VALUE foo1 0 1 (\d+)\r\n/, "validating first set of data is foo1");
 $foo1_cas = $1;
-is(scalar <$sock>, "1\r\n", "validating foo1 set of data is 1");
+is(scalar <$sock>, "1\r\n",, "validating foo1 set of data is 1");
 ok(scalar <$sock> =~ /VALUE foo2 0 1 (\d+)\r\n/, "validating second set of data is foo2");
 $foo2_cas = $1;
 is(scalar <$sock>, "2\r\n", "validating foo2 set of data is 2");
@@ -131,28 +115,3 @@ ok( ( $res1 eq "STORED\r\n" && $res2 eq "EXISTS\r\n") ||
     ( $res1 eq "EXISTS\r\n" && $res2 eq "STORED\r\n"),
     "cas on same item from two sockets");
 
-### bug 15: http://code.google.com/p/memcached/issues/detail?id=15
-
-# set foo
-print $sock "set bug15 0 0 1\r\n0\r\n";
-is(scalar <$sock>, "STORED\r\n", "stored 0");
-
-# Check out the first gets.
-print $sock "gets bug15\r\n";
-ok(scalar <$sock> =~ /VALUE bug15 0 1 (\d+)\r\n/, "gets bug15 regexp success");
-my $bug15_cas = $1;
-is(scalar <$sock>, "0\r\n", "gets bug15 data is 0");
-is(scalar <$sock>, "END\r\n","gets bug15 END");
-
-# Increment
-print $sock "incr bug15 1\r\n";
-is(scalar <$sock>, "1\r\n", "incr worked");
-
-# Validate a changed CAS
-print $sock "gets bug15\r\n";
-ok(scalar <$sock> =~ /VALUE bug15 0 1 (\d+)\r\n/, "gets bug15 regexp success");
-my $next_bug15_cas = $1;
-is(scalar <$sock>, "1\r\n", "gets bug15 data is 0");
-is(scalar <$sock>, "END\r\n","gets bug15 END");
-
-ok($bug15_cas != $next_bug15_cas, "CAS changed");

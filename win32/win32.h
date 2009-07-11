@@ -5,23 +5,26 @@
 #ifndef WIN32_H
 #define WIN32_H
 
+#undef  _WIN32_WINNT
 #define _WIN32_WINNT    0x0501        /* Needed to resolve getaddrinfo et al. */
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #include <stdio.h>
 #include <io.h>
 #include <time.h>
 #include <fcntl.h>
-#include <Winsock2.h>
 #include <errno.h>
 #include <stdint.h>
 #include <process.h>
-
-#pragma warning(disable : 4996)
+#include "ntservice.h"
 
 #define EWOULDBLOCK        EAGAIN
 #define EAFNOSUPPORT       47
 #define EADDRINUSE         WSAEADDRINUSE
 #define EAI_SYSTEM         -11
-typedef int socklen_t;
+
 typedef char *caddr_t;
 
 #define O_BLOCK 0
@@ -51,12 +54,6 @@ struct msghdr {
 #else
   #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 #endif
-
-struct timezone {
-    int  tz_minuteswest; /* minutes W of Greenwich */
-    int  tz_dsttime;     /* type of dst correction */
-};
-
 
 /* Structure which says how much of each resource has been used.  */
 struct rusage {
@@ -193,13 +190,15 @@ static inline int sendmsg(int s, const struct msghdr *msg, int flags)
     return -1;
 }
 
-unsigned __int64 strtoull(const char *p,char **pend,int base);
-
 int createLocalListSock(struct sockaddr_in *saddr);
 int createLocalSocketPair(int listSock, int *fds, struct sockaddr_in *saddr);
 int getrusage(int who, struct rusage *usage);
-int gettimeofday(struct timeval *timer, struct timezone *tz);
 int kill(int pid, int sig);
 int sleep(int seconds);
+
+static inline void _set_errno(int err)
+{
+    errno = err;
+}
 
 #endif

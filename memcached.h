@@ -11,14 +11,26 @@
 #include "config.h"
 #endif
 
+#include <event.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <pthread.h>
+
+#ifndef __WIN32__
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
-#include <event.h>
 #include <netdb.h>
-#include <pthread.h>
 #include <unistd.h>
+#else
+#include "win32.h"
+#include "sysexits.h"
+void run_server(void);
+void stop_server(void);
+void pause_server(void);
+void continue_server(void);
+#endif
 
 #include "memcached/protocol_binary.h"
 #include "memcached/engine.h"
@@ -74,7 +86,6 @@
 #define CHUNK_ALIGN_BYTES 8
 #define DONT_PREALLOC_SLABS
 #define MAX_NUMBER_OF_SLAB_CLASSES (POWER_LARGEST + 1)
-
 
 #define STAT_KEY_LEN 128
 #define STAT_VAL_LEN 128
@@ -151,6 +162,9 @@ struct slab_stats {
     uint64_t  delete_hits;
     uint64_t  cas_hits;
     uint64_t  cas_badval;
+    uint64_t  incr_hits;
+    uint64_t  decr_hits;
+
 };
 
 /**

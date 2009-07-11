@@ -1,11 +1,15 @@
 /* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
+#include "memcached.h"
 
+#ifndef __WIN32__
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/signal.h>
 #include <sys/resource.h>
-#include <fcntl.h>
 #include <netinet/in.h>
+#endif
+
+#include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
