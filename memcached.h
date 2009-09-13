@@ -20,7 +20,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "protocol_binary.h"
+#include "memcached/protocol_binary.h"
 #include "cache.h"
 
 #include "sasl_defs.h"

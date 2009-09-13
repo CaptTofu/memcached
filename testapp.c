@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 
-#include "protocol_binary.h"
+#include "memcached/protocol_binary.h"
 #include "config.h"
 #include "cache.h"
 #include "util.h"
