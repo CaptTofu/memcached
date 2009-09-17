@@ -668,7 +668,7 @@ static enum test_return test_issue_92(void) {
 }
 
 static enum test_return start_memcached_server(void) {
-    server_pid = start_server(&port, false, 600);
+    server_pid = start_server(&port, false, 6000);
     sock = connect_server("127.0.0.1", port);
     return TEST_PASS;
 }
@@ -1853,7 +1853,7 @@ int main(int argc, char **argv)
 
     for (ii = 0; testcases[ii].description != NULL; ++ii) {
         fflush(stdout);
-#ifndef DEBUG
+#if 0
         /* the test program shouldn't run longer than 10 minutes... */
         alarm(600);
 #endif
