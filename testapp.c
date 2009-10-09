@@ -1806,7 +1806,9 @@ struct testcase testcases[] = {
     { "config_parser", test_config_parser },
     /* The following tests all run towards the same server */
     { "start_server", start_memcached_server },
+#ifdef FUTURE
     { "issue_92", test_issue_92 },
+#endif
     { "binary_noop", test_binary_noop },
     { "binary_quit", test_binary_quit },
     { "binary_quitq", test_binary_quitq },
