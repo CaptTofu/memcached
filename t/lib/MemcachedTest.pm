@@ -137,7 +137,7 @@ sub free_port {
 }
 
 sub supports_udp {
-    my $output = `$builddir/memcached-debug -h`;
+    my $output = `$builddir/memcached -h`;
     return 0 if $output =~ /^memcached 1\.1\./;
     return 1;
 }
@@ -175,7 +175,7 @@ sub new_memcached {
 
     my $childpid = fork();
 
-    my $exe = "$builddir/memcached-debug";
+    my $exe = "$builddir/memcached";
     croak("memcached binary doesn't exist.  Haven't run 'make' ?\n") unless -e $exe;
     croak("memcached binary not executable\n") unless -x _;
 
