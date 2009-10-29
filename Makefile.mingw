@@ -1,0 +1,37 @@
+# Linux, cross compile
+#CC := i386-mingw32msvc-gcc
+# Windows
+CC := mingw32-gcc
+
+# set this to wherever you have all the goods
+# in the system I was using, libevent and pthread were 
+# in this directory
+prefix := /c/msysgit/msysgit
+
+memcached_obj := memcached
+
+all: ${memcached_obj}
+
+memcached_objs := assoc.o cache.o globals.o hash.o items.o
+memcached_objs += memcached.o slabs.o thread.o util.o
+memcached_objs += stats.o
+memcached_objs += win32/dummy_defs.o win32/ntservice.o win32/win32.o
+
+memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
+memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
+memcached_cflags += -Wmissing-declarations -Wredundant-decls
+memcached_cflags += -Iwin32 -I${prefix}/include -I${prefix}/libevent -I${prefix}/pthread -DHAVE_CONFIG_H
+
+#memcached_ldflags := -L${prefix}/lib -lpthreadGC2 -levent -lwsock32
+memcached_ldflags := -L${prefix}/lib -L${prefix}/pthread -L${prefix}/libevent -lpthread -levent -lwsock32 -lws2_32
+
+%.o: %.c
+	${CC} ${memcached_cflags} -MD -c $< -o $@
+
+-include ${memcached_objs:.o=.d}
+
+${memcached_obj}: ${memcached_objs}
+	${CC} -o ${memcached_obj} ${memcached_objs} ${memcached_ldflags}
+
+clean:
+	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_obj}
