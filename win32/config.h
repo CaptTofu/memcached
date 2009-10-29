@@ -1,35 +1,43 @@
+/* Name of package */
 #ifndef _CONFIG_H
 #define _CONFIG_H
+
 /* Name of package */
 #define PACKAGE "memcached"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "brad@danga.com"
+#define PACKAGE_BUGREPORT "patrick.galbraith@northscale.com"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "memcached Server"
+#define PACKAGE_NAME "memcached"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "memcached 1.2.5"
+#define PACKAGE_STRING "memcached 1.4.1"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_DESCRIPTION "memcached 1.2.5 is a high-performance, distributed memory object caching system, generic in nature, but intended for use in speeding up dynamic web applications by alleviating database load. Win32 port by Kronuz."
+#define PACKAGE_DESCRIPTION "memcached 1.4.1 is a high-performance, distributed memory object caching system, generic in nature, but intended for use in speeding up dynamic web applications by alleviating database load. Win32 port by Kronuz."
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "memcached"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.2.5"
+#define PACKAGE_VERSION "1.4.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.2.5"
+#define VERSION "1.4.1"
 
-/* Machine is littleendian */
+/* machine is littleendian */
 #define ENDIAN_LITTLE 1
 
+
+/* Define to empty if `const' does not conform to ANSI C. */
+/* #undef const */
+
+/* define to int if socklen_t not available */
+/* #undef socklen_t */
 /* Windows-specific includes */
 #include <sys/types.h>
 #include <sys/stat.h>
