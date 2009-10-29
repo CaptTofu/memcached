@@ -8,14 +8,14 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 
-typedef void (*svcFunc) ();
+typedef void (*svcFunc) (void);
 
-int ServiceStart();
-int ServiceStop();
-int ServiceRestart();
-int ServiceUninstall();
-int ServiceInstall();
-int ServiceRun();
+int ServiceStart(void);
+int ServiceStop(void);
+int ServiceRestart(void);
+int ServiceUninstall(void);
+int ServiceInstall(void);
+int ServiceRun(void);
 
 void ServiceSetFunc(svcFunc runFunc, svcFunc pauseFunc, svcFunc continueFunc, svcFunc stopFunc);
 

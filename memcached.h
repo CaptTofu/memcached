@@ -11,14 +11,22 @@
 #include "config.h"
 #endif
 
+#include <event.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <pthread.h>
+
+#ifndef __WIN32__
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
-#include <event.h>
 #include <netdb.h>
-#include <pthread.h>
 #include <unistd.h>
+#else
+#include "win32.h"
+#include "sysexits.h"
+#endif
 
 #include "memcached/protocol_binary.h"
 #include "memcached/engine.h"
@@ -94,6 +102,24 @@
 #define APPEND_NUM_STAT(num, name, fmt, val) \
     APPEND_NUM_FMT_STAT("%d:%s", num, name, fmt, val)
 
+#ifdef __GNUC__
+#define GNUC_FORMAT_PRINTF(x,y) __attribute__((format(printf, x, y)))
+#else
+#define GNUC_FORMAT_PRINTF(x,y)
+#endif
+
+/**
+ * Callback for any function producing stats.
+ *
+ * @param key the stat's key
+ * @param klen length of the key
+ * @param val the stat's value in an ascii form (e.g. text form of a number)
+ * @param vlen length of the value
+ * @parm cookie magic callback cookie
+ */
+typedef void (*ADD_STAT)(const char *key, const uint16_t klen,
+                         const char *val, const uint32_t vlen,
+                         const void *cookie);
 
 /*
  * NOTE: If you modify this table you _MUST_ update the function state_text
@@ -391,7 +417,7 @@ void slab_stats_aggregate(struct thread_stats *stats, struct slab_stats *out);
 
 /* Stat processing functions */
 void append_stat(const char *name, ADD_STAT add_stats, conn *c,
-                 const char *fmt, ...);
+                 const char *fmt, ...) GNUC_FORMAT_PRINTF(4, 5);
 
 void notify_io_complete(const void *cookie, ENGINE_ERROR_CODE status);
 void drive_machine(conn *c);

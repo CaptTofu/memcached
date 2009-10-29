@@ -14,14 +14,17 @@
  *      Brad Fitzpatrick <brad@danga.com>
  */
 #include "memcached.h"
+
+#ifndef __WIN32__
+
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/un.h>
-#include <signal.h>
 #include <sys/resource.h>
 #include <sys/uio.h>
-#include <ctype.h>
-#include <stdarg.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <signal.h>
 
 /* some POSIX systems need the following definition
  * to get mlockall flags out of sys/mman.h.  */
@@ -34,16 +37,6 @@
 #endif
 #include <pwd.h>
 #include <sys/mman.h>
-#include <fcntl.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <assert.h>
-#include <limits.h>
 #include <sysexits.h>
 #include <stddef.h>
 #ifdef HAVE_DLFCN_H
@@ -59,6 +52,24 @@
 # define IOV_MAX 1024
 #endif
 #endif
+
+#else
+
+#include <getopt.h>
+
+#endif /* !__WIN32__ */
+
+#include <fcntl.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <assert.h>
+#include <limits.h>
+#include <ctype.h>
+#include <stdarg.h>
+#include <inttypes.h>
 
 /*
  * We keep the current time of day in a global variable that's updated by a
@@ -1042,10 +1053,10 @@ static void complete_incr_bin(conn *c) {
         for (i = 0; i < nkey; i++) {
             fprintf(stderr, "%c", key[i]);
         }
-        fprintf(stderr, " %lld, %llu, %d\n",
-                (long long)req->message.body.delta,
-                (long long)req->message.body.initial,
-                req->message.body.expiration);
+        fprintf(stderr, " %" PRIu64 ", %" PRIu64 ", %" PRIu64 "\n",
+                (unsigned long long)req->message.body.delta,
+                (unsigned long long)req->message.body.initial,
+                (unsigned long long)req->message.body.expiration);
     }
 
     ENGINE_ERROR_CODE ret;
@@ -2452,27 +2463,29 @@ static void server_stats(ADD_STAT add_stats, conn *c) {
     APPEND_STAT("curr_connections", "%u", stats.curr_conns - 1);
     APPEND_STAT("total_connections", "%u", stats.total_conns);
     APPEND_STAT("connection_structures", "%u", stats.conn_structs);
-    APPEND_STAT("cmd_get", "%"PRIu64, thread_stats.get_cmds);
-    APPEND_STAT("cmd_set", "%"PRIu64, slab_stats.set_cmds);
-    APPEND_STAT("cmd_flush", "%"PRIu64, thread_stats.flush_cmds);
-    APPEND_STAT("get_hits", "%"PRIu64, slab_stats.get_hits);
-    APPEND_STAT("get_misses", "%"PRIu64, thread_stats.get_misses);
-    APPEND_STAT("delete_misses", "%"PRIu64, thread_stats.delete_misses);
-    APPEND_STAT("delete_hits", "%"PRIu64, slab_stats.delete_hits);
-    APPEND_STAT("incr_misses", "%"PRIu64, thread_stats.incr_misses);
-    APPEND_STAT("incr_hits", "%"PRIu64, thread_stats.incr_hits);
-    APPEND_STAT("decr_misses", "%"PRIu64, thread_stats.decr_misses);
-    APPEND_STAT("decr_hits", "%"PRIu64, thread_stats.decr_hits);
-    APPEND_STAT("cas_misses", "%"PRIu64, thread_stats.cas_misses);
-    APPEND_STAT("cas_hits", "%"PRIu64, slab_stats.cas_hits);
-    APPEND_STAT("cas_badval", "%"PRIu64, slab_stats.cas_badval);
-    APPEND_STAT("bytes_read", "%"PRIu64, thread_stats.bytes_read);
-    APPEND_STAT("bytes_written", "%"PRIu64, thread_stats.bytes_written);
-    APPEND_STAT("limit_maxbytes", "%zu", settings.maxbytes);
+    APPEND_STAT("cmd_get", "%" PRIu64, (unsigned long long)thread_stats.get_cmds);
+    APPEND_STAT("cmd_set", "%" PRIu64, (unsigned long long)slab_stats.set_cmds);
+    APPEND_STAT("cmd_flush", "%" PRIu64, (unsigned long long)thread_stats.flush_cmds);
+    APPEND_STAT("get_hits", "%" PRIu64, (unsigned long long)slab_stats.get_hits);
+    APPEND_STAT("get_misses", "%" PRIu64, (unsigned long long)thread_stats.get_misses);
+    APPEND_STAT("delete_misses", "%" PRIu64, (unsigned long long)thread_stats.delete_misses);
+    APPEND_STAT("delete_hits", "%" PRIu64, (unsigned long long)slab_stats.delete_hits);
+    APPEND_STAT("incr_misses", "%" PRIu64, (unsigned long long)thread_stats.incr_misses);
+    APPEND_STAT("incr_hits", "%" PRIu64, (unsigned long long)slab_stats.incr_hits);
+    APPEND_STAT("decr_misses", "%" PRIu64, (unsigned long long)thread_stats.decr_misses);
+    APPEND_STAT("decr_hits", "%" PRIu64, (unsigned long long)slab_stats.decr_hits);
+    APPEND_STAT("cas_misses", "%" PRIu64, (unsigned long long)thread_stats.cas_misses);
+    APPEND_STAT("cas_hits", "%" PRIu64, (unsigned long long)slab_stats.cas_hits);
+    APPEND_STAT("cas_badval", "%" PRIu64, (unsigned long long)slab_stats.cas_badval);
+    APPEND_STAT("auth_cmds", "%" PRIu64, (unsigned long long)thread_stats.auth_cmds);
+    APPEND_STAT("auth_errors", "%" PRIu64, (unsigned long long)thread_stats.auth_errors);
+    APPEND_STAT("bytes_read", "%" PRIu64, (unsigned long long)thread_stats.bytes_read);
+    APPEND_STAT("bytes_written", "%" PRIu64, (unsigned long long)thread_stats.bytes_written);
+    APPEND_STAT("limit_maxbytes", "%" PRIu64, (unsigned long long)settings.maxbytes);
     APPEND_STAT("accepting_conns", "%u", stats.accepting_conns);
-    APPEND_STAT("listen_disabled_num", "%"PRIu64, stats.listen_disabled_num);
+    APPEND_STAT("listen_disabled_num", "%" PRIu64, (unsigned long long)stats.listen_disabled_num);
     APPEND_STAT("threads", "%d", settings.num_threads);
-    APPEND_STAT("conn_yields", "%"PRIu64, thread_stats.conn_yields);
+    APPEND_STAT("conn_yields", "%" PRIu64, (unsigned long long)thread_stats.conn_yields);
     STATS_UNLOCK();
 }
 
@@ -2679,10 +2692,12 @@ static inline void process_get_command(conn *c, token_t *tokens, size_t ntokens,
                     settings.engine.v1->release(settings.engine.v0, c, it);
                     return;
                   }
-                  *(c->suffixlist + i) = cas;
-                  int cas_len = snprintf(cas, SUFFIX_SIZE,
-                                            " %"PRIu64"\r\n",
-                                            settings.engine.v1->item_get_cas(it));
+                  *(c->suffixlist + i) = suffix;
+
+                  int suffix_len =
+                      sprintf(suffix, " %"PRIu64"\r\n",
+                              (unsigned long long)ITEM_get_cas(it));
+
                   if (add_iov(c, "VALUE ", 6) != 0 ||
                       add_iov(c, settings.engine.v1->item_get_key(it), it->nkey) != 0 ||
                       add_iov(c, suffix, suffix_len - 2) != 0 ||
@@ -2861,7 +2876,6 @@ static void process_update_command(conn *c, token_t *tokens, const size_t ntoken
 }
 
 static void process_arithmetic_command(conn *c, token_t *tokens, const size_t ntokens, const bool incr) {
-
     uint64_t delta;
     char *key;
     size_t nkey;
@@ -3811,7 +3825,7 @@ static void maximize_sndbuf(const int sfd) {
     int old_size;
 
     /* Start with the default size. */
-    if (getsockopt(sfd, SOL_SOCKET, SO_SNDBUF, &old_size, &intsize) != 0) {
+    if (getsockopt(sfd, SOL_SOCKET, SO_SNDBUF, (void *)&old_size, &intsize) != 0) {
         if (settings.verbose > 0)
             perror("getsockopt(SO_SNDBUF)");
         return;
@@ -4232,6 +4246,8 @@ static void remove_pidfile(const char *pid_file) {
 
 }
 
+#ifndef __WIN32__
+
 static void sig_handler(const int sig) {
     printf("SIGINT handled.\n");
     exit(EXIT_SUCCESS);
@@ -4246,7 +4262,9 @@ static int sigignore(int sig) {
     }
     return 0;
 }
-#endif
+#endif /* !HAVE_SIGIGNORE */
+
+#endif /* !__WIN32__ */
 
 
 /*
@@ -4446,10 +4464,10 @@ int main (int argc, char **argv) {
     char old_options[1024] = { [0] = '\0' };
     char *old_opts = old_options;
 
-
-
-   /* handle SIGINT */
+#ifndef __WIN32__
+    /* handle SIGINT */
     signal(SIGINT, sig_handler);
+#endif
 
     /* init settings */
     settings_init();
@@ -4766,6 +4784,7 @@ int main (int argc, char **argv) {
     /* daemonize if requested */
     /* if we want to ensure our ability to dump core, don't chdir to / */
     if (do_daemonize) {
+#ifndef __WIN32__
         if (sigignore(SIGHUP) == -1) {
             perror("Failed to ignore SIGHUP");
         }
@@ -4773,6 +4792,7 @@ int main (int argc, char **argv) {
             fprintf(stderr, "failed to daemon() in order to daemonize\n");
             exit(EXIT_FAILURE);
         }
+#endif
     }
 
     /* lock paged memory if needed */
@@ -4801,6 +4821,7 @@ int main (int argc, char **argv) {
     stats_init();
     conn_init();
 
+#ifndef __WIN32__
     /*
      * ignore SIGPIPE signals; we can use errno == EPIPE if we
      * need that information
@@ -4809,6 +4830,8 @@ int main (int argc, char **argv) {
         perror("failed to ignore SIGPIPE; sigaction");
         exit(EX_OSERR);
     }
+#endif
+
     /* start up worker threads if MT mode */
     thread_init(settings.num_threads, main_base);
     /* save the PID in if we're a daemon, do this after thread_init due to
