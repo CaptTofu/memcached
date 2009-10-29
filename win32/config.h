@@ -34,19 +34,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "win32.h"
-#include <Winsock2.h>
+#include <winsock2.h>
 #include <ws2tcpip.h>
 #include <process.h>
 #include "ntservice.h"
-#include "bsd_getopt.h"
 
 /*******************************/
 /* HACKS to compile under UNIX */
 
-#define SIGHUP 0
-#define HAVE_SIGIGNORE
-#define SIGINT 2
-#define SIGPIPE 13
 #define S_ISSOCK(mode) 0
 #define RLIMIT_CORE 4
 #define RLIM_INFINITY ((unsigned long int) (-0UL))
@@ -79,14 +74,13 @@ struct rlimit {
  * - function definitions in dummy_defs.c
  */
 
-int lstat(char * path, struct stat * tstat);
+int lstat(const char *path, struct stat *tstat);
 int sigignore(int sig);
 int getrlimit(int __resource, struct rlimit * __rlimits);
 int setrlimit(int __resource, struct rlimit * __rlimits);
-_uid_t getuid();
-_uid_t geteuid();
-struct passwd * getpwnam(char * name);
+_uid_t getuid(void);
+_uid_t geteuid(void);
+struct passwd *getpwnam(const char *name);
 int setuid(_uid_t uid);
 int setgid(_uid_t gid);
-int daemonize(int nochdir, int noclose);
 #endif // _CONFIG_H

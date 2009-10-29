@@ -4,15 +4,11 @@
 
 #include <config.h>
 
-int lstat(char * path, struct stat * tstat) {
+int lstat(const char *path, struct stat *tstat) {
     return -1;
 }
 
-int sigignore(int sig) {
-    return 0;
-}
-
-int getrlimit(int __resource, struct rlimit * __rlimits) {
+int getrlimit(int __resource, struct rlimit *__rlimits) {
     /* HACK ALERT: This function MUST BE called from main() before any *
      * network operation for Windows networking to work. Since the     *
      * main() is calling getrlimit() that is NOT meaningful for        *
@@ -31,18 +27,18 @@ int getrlimit(int __resource, struct rlimit * __rlimits) {
     return 0;
 }
 
-int setrlimit(int __resource, struct rlimit * __rlimits) {
+int setrlimit(int __resource, struct rlimit *__rlimits) {
     return 0;
 }
 
-_uid_t getuid() {
+_uid_t getuid(void) {
     return -1;
 }
-_uid_t geteuid() {
+_uid_t geteuid(void) {
     return -1;
 }
 
-struct passwd * getpwnam(char * name) {
+struct passwd *getpwnam(const char *name) {
     return 0;
 }
 
@@ -51,9 +47,5 @@ int setuid(_uid_t uid) {
 }
 
 int setgid(_uid_t gid) {
-    return -1;
-}
-
-int daemonize(int nochdir, int noclose) {
     return -1;
 }
