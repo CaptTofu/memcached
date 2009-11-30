@@ -6,7 +6,7 @@ CC := mingw32-gcc
 # set this to wherever you have all the goods
 # in the system I was using, libevent and pthread were 
 # in this directory
-prefix := /c/msysgit/msysgit
+prefix := /
 
 memcached_obj := memcached
 
@@ -20,10 +20,9 @@ memcached_objs += win32/dummy_defs.o win32/ntservice.o win32/win32.o
 memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
 memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
 memcached_cflags += -Wmissing-declarations -Wredundant-decls
-memcached_cflags += -Iwin32 -I${prefix}/include -I${prefix}/libevent -I${prefix}/pthread -DHAVE_CONFIG_H
+memcached_cflags += -Iwin32 -DHAVE_CONFIG_H
 
-#memcached_ldflags := -L${prefix}/lib -lpthreadGC2 -levent -lwsock32
-memcached_ldflags := -L${prefix}/lib -L${prefix}/pthread -L${prefix}/libevent -lpthread -levent -lwsock32 -lws2_32
+memcached_ldflags := -lpthread -levent -lwsock32 -lws2_32
 
 %.o: %.c
 	${CC} ${memcached_cflags} -MD -c $< -o $@

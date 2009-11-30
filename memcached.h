@@ -102,24 +102,6 @@
 #define APPEND_NUM_STAT(num, name, fmt, val) \
     APPEND_NUM_FMT_STAT("%d:%s", num, name, fmt, val)
 
-#ifdef __GNUC__
-#define GNUC_FORMAT_PRINTF(x,y) __attribute__((format(printf, x, y)))
-#else
-#define GNUC_FORMAT_PRINTF(x,y)
-#endif
-
-/**
- * Callback for any function producing stats.
- *
- * @param key the stat's key
- * @param klen length of the key
- * @param val the stat's value in an ascii form (e.g. text form of a number)
- * @param vlen length of the value
- * @parm cookie magic callback cookie
- */
-typedef void (*ADD_STAT)(const char *key, const uint16_t klen,
-                         const char *val, const uint32_t vlen,
-                         const void *cookie);
 
 /*
  * NOTE: If you modify this table you _MUST_ update the function state_text
