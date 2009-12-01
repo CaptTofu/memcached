@@ -49,10 +49,9 @@
 
 #else
 
-#include <getopt.h>
-
 #endif /* !__WIN32__ */
 
+#include <getopt.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -2373,8 +2372,10 @@ static void server_stats(ADD_STAT add_stats, conn *c) {
     struct slab_stats slab_stats;
     slab_stats_aggregate(&thread_stats, &slab_stats);
 
+#ifndef __WIN32__
     struct rusage usage;
     getrusage(RUSAGE_SELF, &usage);
+#endif
 
     STATS_LOCK();
 
@@ -2384,12 +2385,14 @@ static void server_stats(ADD_STAT add_stats, conn *c) {
     APPEND_STAT("version", "%s", VERSION);
     APPEND_STAT("pointer_size", "%d", (int)(8 * sizeof(void *)));
 
+#ifndef __WIN32__
     append_stat("rusage_user", add_stats, c, "%ld.%06ld",
                 (long)usage.ru_utime.tv_sec,
                 (long)usage.ru_utime.tv_usec);
     append_stat("rusage_system", add_stats, c, "%ld.%06ld",
                 (long)usage.ru_stime.tv_sec,
                 (long)usage.ru_stime.tv_usec);
+#endif
 
     APPEND_STAT("curr_connections", "%u", stats.curr_conns - 1);
     APPEND_STAT("total_connections", "%u", stats.total_conns);
@@ -2475,6 +2478,7 @@ static void process_stat(conn *c, token_t *tokens, const size_t ntokens) {
     } else if (strcmp(subcommand, "settings") == 0) {
         process_stat_settings(&append_stats, c);
     } else if (strcmp(subcommand, "cachedump") == 0) {
+    /* the other windows dist of memcached 1.2.4 has this ifndefed */
         char *buf;
         unsigned int bytes, id, limit = 0;
 
@@ -3950,6 +3954,7 @@ static int new_socket_unix(void) {
     return sfd;
 }
 
+/* this will probably not work on windows */
 static int server_socket_unix(const char *path, int access_mask) {
     int sfd;
     struct linger ling = {0, 0};
@@ -4057,7 +4062,15 @@ static void usage(void) {
            "-s <file>     unix socket path to listen on (disables network support)\n"
            "-a <mask>     access mask for unix socket, in octal (default 0700)\n"
            "-l <ip_addr>  interface to listen on, default is INADDR_ANY\n"
+#ifndef __WIN32__
            "-d            run as a daemon\n"
+#else
+           "-d start          tell memcached to start\n"
+           "-d restart        tell running memcached to do a graceful restart\n"
+           "-d stop|shutdown  tell running memcached to shutdown\n"
+           "-d install        install memcached service\n"
+           "-d uninstall      uninstall memcached service\n"
+#endif
            "-r            maximize core file limit\n"
            "-u <username> assume identity of <username> (only when run as root)\n"
            "-m <num>      max memory to use for items in megabytes (default: 64 MB)\n"
@@ -4200,6 +4213,29 @@ static void remove_pidfile(const char *pid_file) {
 
 }
 
+#ifdef __WIN32__
+void run_server(void)
+{
+    /* enter the loop */
+    event_loop(0);
+}
+
+void stop_server(void)
+{
+    /* exit the loop */
+    event_loopexit(NULL);
+}
+void pause_server(void)
+{
+    /* not implemented yet */
+}
+
+void continue_server(void)
+{
+    /* not implemented yet */
+}
+#endif
+
 #ifndef __WIN32__
 
 static void sig_handler(const int sig) {
@@ -4267,7 +4303,11 @@ static int enable_large_pages(void) {
 int main (int argc, char **argv) {
     int c;
     bool lock_memory = false;
+#ifndef __WIN32__
     bool do_daemonize = false;
+#else
+    unsigned int do_daemonize = 0;
+#endif
     bool preallocate = false;
     int maxcore = 0;
     char *username = NULL;
@@ -4309,7 +4349,11 @@ int main (int argc, char **argv) {
           "hi"  /* help, licence info */
           "r"   /* maximize core file limit */
           "v"   /* verbose */
+#ifndef __WIN32__
           "d"   /* daemon mode */
+#else
+	  "d:"
+#endif
           "l:"  /* interface to listen on */
           "u:"  /* user identity to run as */
           "P:"  /* save PID in file */
@@ -4367,7 +4411,18 @@ int main (int argc, char **argv) {
             settings.inter= strdup(optarg);
             break;
         case 'd':
+#ifndef __WIN32__
             do_daemonize = true;
+#else
+            if(!optarg || !strcmpi(optarg, "runservice")) do_daemonize = 1;
+            else if(!strcmpi(optarg, "start")) do_daemonize = 2;
+            else if(!strcmpi(optarg, "restart")) do_daemonize = 3;
+            else if(!strcmpi(optarg, "stop")) do_daemonize = 4;
+            else if(!strcmpi(optarg, "shutdown")) do_daemonize = 5;
+            else if(!strcmpi(optarg, "install")) do_daemonize = 6;
+            else if(!strcmpi(optarg, "uninstall")) do_daemonize = 7;
+            else fprintf(stderr, "Illegal argument: \"%s\"\n", optarg);
+#endif
             break;
         case 'r':
             maxcore = 1;
@@ -4576,10 +4631,10 @@ int main (int argc, char **argv) {
         init_sasl();
     }
 
+#ifndef __WIN32__
     /* daemonize if requested */
     /* if we want to ensure our ability to dump core, don't chdir to / */
     if (do_daemonize) {
-#ifndef __WIN32__
         if (sigignore(SIGHUP) == -1) {
             perror("Failed to ignore SIGHUP");
         }
@@ -4587,8 +4642,42 @@ int main (int argc, char **argv) {
             fprintf(stderr, "failed to daemon() in order to daemonize\n");
             exit(EXIT_FAILURE);
         }
-#endif
     }
+#else
+    switch(do_daemonize) {
+        case 2:
+            if(!ServiceStart()) {
+                fprintf(stderr, "failed to start service\n");
+                return 1;
+            }
+            exit(0);
+        case 3:
+            if(!ServiceRestart()) {
+                fprintf(stderr, "failed to restart service\n");
+                return 1;
+            }
+            exit(0);
+        case 4:
+        case 5:
+            if(!ServiceStop()) {
+                fprintf(stderr, "failed to stop service\n");
+                return 1;
+            }
+            exit(0);
+        case 6:
+            if(!ServiceInstall()) {
+                fprintf(stderr, "failed to install service or service already installed\n");
+                return 1;
+            }
+            exit(0);
+        case 7:
+            if(!ServiceUninstall()) {
+                fprintf(stderr, "failed to uninstall service or service not installed\n");
+                return 1;
+            }
+            exit(0);
+    }
+#endif
 
     /* lock paged memory if needed */
     if (lock_memory) {
@@ -4706,6 +4795,12 @@ int main (int argc, char **argv) {
     /* Drop privileges no longer needed */
     drop_privileges();
 
+#ifdef __WIN32__
+    if (do_daemonize) {
+    	ServiceSetFunc(run_server, pause_server, continue_server, stop_server);
+        ServiceRun();
+    } else
+#endif
     /* enter the event loop */
     event_base_loop(main_base, 0);
 
