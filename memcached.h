@@ -26,6 +26,10 @@
 #else
 #include "win32.h"
 #include "sysexits.h"
+void run_server(void);
+void stop_server(void);
+void pause_server(void);
+void continue_server(void);
 #endif
 
 #include "memcached/protocol_binary.h"
