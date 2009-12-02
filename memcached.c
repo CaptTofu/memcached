@@ -4217,7 +4217,8 @@ static void remove_pidfile(const char *pid_file) {
 void run_server(void)
 {
     /* enter the loop */
-    event_loop(0);
+    //event_loop(0);
+    event_base_loop(main_base, 0);
 }
 
 void stop_server(void)
