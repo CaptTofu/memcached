@@ -4268,8 +4268,9 @@ void run_server(void)
 
 void stop_server(void)
 {
+    const struct timeval t = {.tv_sec = 1, .tv_usec = 0};
     /* exit the loop */
-    event_loopexit(NULL);
+    event_base_loopexit(main_base, &t);
 }
 void pause_server(void)
 {
