@@ -526,8 +526,10 @@ void thread_init(int nthreads, struct event_base *main_base) {
         threads[i].notify_send_fd = fds[1];
 
         setup_thread(&threads[i]);
+#ifdef __WIN32__
         if (i == (nthreads - 1))
             shutdown(sockfd, 2);
+#endif
     }
 
     /* Create threads after we've done all the libevent setup. */
