@@ -22,27 +22,51 @@ Next, from mingw.org...
   - choose 'y' for all the post-install steps, and tell it about C:\MinGW
 
 Next, are library dependencies...
+- Path
+  Add /usr/local/lib to your PATH (%PATH% in windows, $PATH in mingw) using control panel (advanced), and any other directory containing DLLs you need!
 
-- download and extract precompiled pthreads
+- Pthreads
+  32-bit: download and extract precompiled pthreads
   - http://sourceware.org/pthreads-win32/
   - look around for pthreads-w32-2-8-0-release.exe
   - create a subdir, such as with...
     - mkdir c:\dev\pthreads
     - download and run it in that subdir to extract files.
+  64-bit
+  - Read http://www.cadforte.com/wiki/index.php/Pthreads
+  - Obtain Pthreads source via CVS per instructions on http://sourceware.org/pthreads-win32
+  	* cvs -d :pserver:anoncvs@sourceware.org:/cvs/pthreads-win32 login
+	* enter 'anoncvs' for password
+	* cvs -d :pservers:anoncvs@sourceware.org:/cvs/pthreads-win32 checkout pthreads
 
-- download and extract libevent source
-  - http://www.monkey.org/~provos/libevent-1.3e.tar.gz
+- Libevent 
 
-- download and extract precompiled libevent binaries
+  32-bit: download and extract libevent source (prefered)
+  - http://www.monkey.org/~provos/libevent-1.4.13-stable.tar.gz
+  - Build and install:
+    * ./configure --prefix=/usr/local
+    * make, make install
+
+	-OR-
+
+  32-bit: binaries
+  - download and extract precompiled libevent binaries
   - see http://www.splinedancer.com/memcached-win32/
   - download it from...
     http://www.splinedancer.com/memcached-win32/libevent-1.3e-Win32.zip
   - unzip it to get the libevent.lib
 
+  64-bit: source (ONLY)
+  - http://www.monkey.org/~provos/libevent-2.0.3-alpha.tar.gz
+  - Patch: patch : patch -p1 < win32/libevent-2.0.3-alpha-mingw-w64.patch
+  - Build and install:
+  	* ./configure --prefix=/usr/local
+	* make, make install
+
 Next, make a directory to hold all the dependencies.  This directory
 will be a sibling to the memcached_win32 subdirectory.  That is, do...
 
-  mkdir /c/dev/memcached_win32_deps
+  mkdir /c/dev/memcached_win32_deps (Patrick's note: I would instead suggest putting stuff in /usr/local/lib and setting PATH)
 
 Copy all the *.h, *.a, *.lib, and *.dll files from pthreads*/**
 into the memcached_win32_deps subdirectory.
@@ -53,6 +77,8 @@ into the memcached_win32_deps subdirectory.
 Next, start a msys shell window...
 
   c:\msys\1.0\msys.bat
+  
+  Or click on 'rxvt' shell window from startup menu
 
 - in that msys shell (which will have a MINGW32 titlebar),
   change to the /c/dev/memcached_win32 directory.
