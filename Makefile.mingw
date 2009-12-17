@@ -4,9 +4,11 @@
 CC := mingw32-gcc
 
 memcached_obj := memcached
+testapp_obj := testapp
 
-all: ${memcached_obj}
+all: ${memcached_obj} ${testapp_obj}
 
+memcached_objs := testapp.o 
 memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
 memcached_objs += stats.o
@@ -17,18 +19,28 @@ memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
 memcached_cflags += -Wmissing-declarations -Wredundant-decls
 memcached_cflags += -I../memcached_win32_deps
 memcached_cflags += -Iwin32 -DHAVE_CONFIG_H
+testapp_cflags := ${memcached_cflags}
 
 memcached_ldflags := -L../memcached_win32_deps
 memcached_ldflags += -lpthread -levent -lwsock32 -lws2_32
+testapp_ldflags := ${memcached_ldflags} 
 
 %.o: %.c
 	${CC} ${memcached_cflags} -MD -c $< -o $@
 
+testapp.o: testapp.c
+	${CC} ${testapp_cflags} -MD -c $< -o $@
+
 -include ${memcached_objs:.o=.d}
+-include ${testapp_objs:.o=.d}
 
 ${memcached_obj}: ${memcached_objs}
 	${CC} -o ${memcached_obj} ${memcached_objs} ${memcached_ldflags}
 
+${testapp_obj}: ${testapp_objs}
+	${CC} -o ${testapp_obj} ${testapp_objs} ${testapp_ldflags}
+
 clean:
 	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_obj}
+	rm -f ${testapp_objs:.o=.d} ${testapp_objs} ${testapp_obj}
 
