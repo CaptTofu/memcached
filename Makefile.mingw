@@ -3,11 +3,6 @@
 # Windows
 CC := mingw32-gcc
 
-# set this to wherever you have all the goods
-# in the system I was using, libevent and pthread were 
-# in this directory
-prefix := /
-
 memcached_obj := memcached
 
 all: ${memcached_obj}
@@ -20,9 +15,11 @@ memcached_objs += win32/dummy_defs.o win32/ntservice.o win32/win32.o
 memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
 memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
 memcached_cflags += -Wmissing-declarations -Wredundant-decls
+memcached_cflags += -I../memcached_win32_deps
 memcached_cflags += -Iwin32 -DHAVE_CONFIG_H
 
-memcached_ldflags := -lpthread -levent -lwsock32 -lws2_32
+memcached_ldflags := -L../memcached_win32_deps
+memcached_ldflags += -lpthread -levent -lwsock32 -lws2_32
 
 %.o: %.c
 	${CC} ${memcached_cflags} -MD -c $< -o $@
@@ -34,3 +31,4 @@ ${memcached_obj}: ${memcached_objs}
 
 clean:
 	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_obj}
+
