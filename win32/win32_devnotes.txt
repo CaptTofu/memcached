@@ -1,0 +1,64 @@
+Notes on building win32 memcached.exe...
+
+Assume you're working in a c:/dev working directory.
+
+First, you'll need git installed, after which you can...
+
+- git clone git@github.com:CaptTofu/memcached.git memcached_win32
+
+Then...
+
+- git checkout --track origin/win32
+
+Next, from mingw.org...
+
+- install MinGW-5.1.6.exe
+  - choose base tools, and options: g++
+  - into c:\MinGW
+
+- install MSYS (MSYS-1.0.11.exe)
+  - into c:\msys\1.0
+  - choose 'y' for all the post-install steps, and tell it about C:\MinGW
+
+Next, are library dependencies...
+
+- download and extract precompiled pthreads
+  - http://sourceware.org/pthreads-win32/
+  - look around for pthreads-w32-2-8-0-release.exe
+  - create a subdir, such as with...
+    - mkdir c:\dev\pthreads
+    - download and run it in that subdir to extract files.
+
+- download and extract libevent source
+  - http://www.monkey.org/~provos/libevent-1.3e.tar.gz
+
+- download and extract precompiled libevent binaries
+  - see http://www.splinedancer.com/memcached-win32/
+  - download it from...
+    http://www.splinedancer.com/memcached-win32/libevent-1.3e-Win32.zip
+  - unzip it to get the libevent.lib
+
+Next, make a directory to hold all the dependencies.  This directory
+will be a sibling to the memcached_win32 subdirectory.  That is, do...
+
+  mkdir /c/dev/memcached_win32_deps
+
+Copy all the *.h, *.a, *.lib, and *.dll files from pthreads*/**
+into the memcached_win32_deps subdirectory.
+
+Copy all the *.h, *.a, *.lib, and *.dll files from libevent*/**
+into the memcached_win32_deps subdirectory.
+
+Next, start a msys shell window...
+
+  c:\msys\1.0\msys.bat
+
+- in that msys shell (which will have a MINGW32 titlebar),
+  change to the /c/dev/memcached_win32 directory.
+
+  cd /c/dev/memcached_win32
+
+Then...
+
+  make -f Makefile.mingw
+
