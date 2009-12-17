@@ -22,24 +22,30 @@ Next, from mingw.org...
   - choose 'y' for all the post-install steps, and tell it about C:\MinGW
 
 Next, are library dependencies...
+
 - Path
-  Add /usr/local/lib to your PATH (%PATH% in windows, $PATH in mingw) using control panel (advanced), and any other directory containing DLLs you need!
+  Add /usr/local/lib to your PATH (%PATH% in windows, $PATH in mingw)
+  using control panel (advanced), and any other directory containing
+  DLLs you need!
 
 - Pthreads
+
   32-bit: download and extract precompiled pthreads
   - http://sourceware.org/pthreads-win32/
   - look around for pthreads-w32-2-8-0-release.exe
   - create a subdir, such as with...
     - mkdir c:\dev\pthreads
     - download and run it in that subdir to extract files.
-  64-bit
+
+  64-bit:
   - Read http://www.cadforte.com/wiki/index.php/Pthreads
-  - Obtain Pthreads source via CVS per instructions on http://sourceware.org/pthreads-win32
+  - Obtain Pthreads source via CVS per instructions on
+    - http://sourceware.org/pthreads-win32
   	* cvs -d :pserver:anoncvs@sourceware.org:/cvs/pthreads-win32 login
 	* enter 'anoncvs' for password
 	* cvs -d :pservers:anoncvs@sourceware.org:/cvs/pthreads-win32 checkout pthreads
 
-- Libevent 
+- Libevent
 
   32-bit: download and extract libevent source (prefered)
   - http://www.monkey.org/~provos/libevent-1.4.13-stable.tar.gz
@@ -77,7 +83,7 @@ into the memcached_win32_deps subdirectory.
 Next, start a msys shell window...
 
   c:\msys\1.0\msys.bat
-  
+
   Or click on 'rxvt' shell window from startup menu
 
 - in that msys shell (which will have a MINGW32 titlebar),
