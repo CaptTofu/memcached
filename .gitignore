@@ -21,6 +21,7 @@ configure
 depcomp
 install-sh
 memcached
+memcached.exe
 memcached-debug
 memcached-debug.profile
 missing
