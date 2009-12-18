@@ -1,5 +1,7 @@
 Notes on building win32 memcached.exe...
 
+- circa, 2009/12/17
+
 Assume you're working in a c:/dev working directory.
 
 First, you'll need git installed, after which you can...
@@ -13,6 +15,13 @@ Then...
 
 Next, from mingw.org...
 
+- install MinGW-5.1.6.exe
+  - it provides basic tools and files, but a previous version of gcc.
+    - we'll soon overwrite it with a newer version of gcc in later steps.
+  - in the installer options, add the g++ compiler
+    - you do _not_ need the Make system, as you'll get it in later steps
+  - use defaults for everything else, into C:\MinGW
+
 - install MinGW gcc compiler version 4, at least version 4.4.0
   - you can get it from...
     http://sourceforge.net/projects/mingw/
@@ -22,12 +31,20 @@ Next, from mingw.org...
   - after downloading it
     - lzma -d gcc-full-4.4.0-mingw32-bin-2.tar.lzma
   - you should have a gcc-full-4.4.0-mingw32-bin-2.tar file
-  - mkdir /c/mingw
   - cd /c/mingw
   - tar -xvf gcc-full-4.4.0-mingw32-bin-2.tar
-  - add c:\mingw\bin to your path
-  - epsecially, this should be on your path
-    c:/bin/gcc.exe
+    - this overwrites the old gcc that you got from MinGW-5.1.6.exe
+  - especially, this should be on your path
+    - c:/mingw/bin/gcc.exe
+    - if not, add c:/mingw/bin to your path environment variable.
+
+Next, download the latest w32api...
+
+- from http://sourceforge.net/projects/mingw/files/
+     MinGW%20API%20for%20MS-Windows/w32api-3.14/
+        w32api-3.14-mingw32-dev.tar.gz/download
+  - cd /c/mingw
+  - tar -xzvf w32api-3.14-mingw32-dev.tar.gz
 
 - install MSYS (MSYS-1.0.11.exe)
   - into c:\msys\1.0
@@ -84,13 +101,21 @@ Next, are library dependencies...
 Next, make a directory to hold all the dependencies.  This directory
 will be a sibling to the memcached_win32 subdirectory.  That is, do...
 
-  mkdir /c/dev/memcached_win32_deps (Patrick's note: I would instead suggest putting stuff in /usr/local/lib and setting PATH)
+  mkdir /c/dev/memcached_win32_deps
 
-Copy all the *.h, *.a, *.lib, and *.dll files from pthreads*/**
+Copy all the p*.h, *.a, *.lib, and *.dll files from pthreads*/**
 into the memcached_win32_deps subdirectory.
 
-Copy all the *.h, *.a, *.lib, and *.dll files from libevent*/**
+Copy all the ev*.h, *.a, *.lib, and *.dll files from libevent*/**
 into the memcached_win32_deps subdirectory.
+
+Next, more PATH...
+
+- add /usr/local/lib to your PATH
+
+And, because it still might have trouble finding libraries
+
+- cp /usr/local/lib/* /c/mingw/lib
 
 Next, start a msys shell window...
 
