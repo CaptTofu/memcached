@@ -32,8 +32,11 @@
 /libtool
 /ltmain.sh
 /m4/version.m4
+/version.m4
 /memcached
 /memcached-*.tar.gz
+/memcached-*.zip
+memcached_*.tar.gz
 /memcached-debug
 /memcached-debug.profile
 /memcached.spec
@@ -50,3 +53,4 @@ Makefile.in
 TAGS
 cscope.out
 tags
+*~
