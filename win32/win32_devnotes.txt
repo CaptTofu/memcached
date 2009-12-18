@@ -13,9 +13,14 @@ Then...
 
 Next, from mingw.org...
 
-- install MinGW-5.1.6.exe
-  - choose base tools, and options: g++
-  - into c:\MinGW
+- install MinGW
+  - you'll need gcc version 4.4.0 which you can get from
+    http://sourceforge.net/projects/mingw/
+  - download x86-mingw32-build-1.0-sh.tar.gz2
+  - tar -xvjf x86-mingw32-build-1.0-sh.tar.bz2
+  - cd x86-mingw32-build-1.0
+  - ./x86-mingw32-build.sh
+  - use default answer for all the questions.
 
 - install MSYS (MSYS-1.0.11.exe)
   - into c:\msys\1.0

@@ -8,7 +8,7 @@ testapp_obj := testapp
 
 all: ${memcached_obj} ${testapp_obj}
 
-memcached_objs := testapp.o 
+memcached_objs := testapp.o
 memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
 memcached_objs += stats.o
@@ -23,7 +23,7 @@ testapp_cflags := ${memcached_cflags}
 
 memcached_ldflags := -L../memcached_win32_deps
 memcached_ldflags += -lpthread -levent -lwsock32 -lws2_32
-testapp_ldflags := ${memcached_ldflags} 
+testapp_ldflags := ${memcached_ldflags}
 
 %.o: %.c
 	${CC} ${memcached_cflags} -MD -c $< -o $@
