@@ -13,14 +13,21 @@ Then...
 
 Next, from mingw.org...
 
-- install MinGW
-  - you'll need gcc version 4.4.0 which you can get from
+- install MinGW gcc compiler version 4, at least version 4.4.0
+  - you can get it from...
     http://sourceforge.net/projects/mingw/
-  - download x86-mingw32-build-1.0-sh.tar.gz2
-  - tar -xvjf x86-mingw32-build-1.0-sh.tar.bz2
-  - cd x86-mingw32-build-1.0
-  - ./x86-mingw32-build.sh
-  - use default answer for all the questions.
+  - look for "GCC Version 4"
+    - look under "Current Release_gcc-4.4.0"
+      - look under "gcc-full-4.4.0-mingw32-bin-2.tar.lzma"
+  - after downloading it
+    - lzma -d gcc-full-4.4.0-mingw32-bin-2.tar.lzma
+  - you should have a gcc-full-4.4.0-mingw32-bin-2.tar file
+  - mkdir /c/mingw
+  - cd /c/mingw
+  - tar -xvf gcc-full-4.4.0-mingw32-bin-2.tar
+  - add c:\mingw\bin to your path
+  - epsecially, this should be on your path
+    c:/bin/gcc.exe
 
 - install MSYS (MSYS-1.0.11.exe)
   - into c:\msys\1.0
