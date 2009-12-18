@@ -3,8 +3,8 @@
 # Windows
 CC := mingw32-gcc
 
-memcached_obj := memcached
-testapp_obj := testapp
+memcached_obj := memcached.exe
+testapp_obj := testapp.exe
 
 all: ${memcached_obj} ${testapp_obj}
 
