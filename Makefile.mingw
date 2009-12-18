@@ -43,4 +43,12 @@ ${testapp_obj}: ${testapp_objs}
 clean:
 	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_obj}
 	rm -f ${testapp_objs:.o=.d} ${testapp_objs} ${testapp_obj}
+	rm -rf memcached_win32
+	rm -rf memcached_win32*.tar.gz
 
+bdist: ${memcached_obj}
+	rm -rf memcached_win32
+	mkdir memcached_win32
+	cp ${memcached_obj} memcached_win32
+	cp ../memcached_win32_deps/pthreadGC2.dll memcached_win32
+	tar -czvf memcached_win32-0.0.0.tar.gz memcached_win32

@@ -32,6 +32,8 @@ cscope.out
 memcached_dtrace.h
 *~
 memcached-*.tar.gz
+memcached_*.tar.gz
+memcached_win32
 doc/protocol-binary-range.txt
 doc/protocol-binary.txt
 /sizes
