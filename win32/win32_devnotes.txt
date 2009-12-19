@@ -6,6 +6,7 @@ Assume you're working in a c:/dev working directory.
 
 First, you'll need git installed, after which you can...
 
+- cd /c/dev
 - git clone git@github.com:CaptTofu/memcached.git memcached_win32
 
 Then...
@@ -66,13 +67,30 @@ Next, are library dependencies...
     - mkdir c:\dev\pthreads
     - download and run it in that subdir to extract files.
 
+  32-bit: from source
+  - http://sourceware.org/pthreads-win32/
+  - look around for pthreads-w32-2-8-0-release.tar.gz
+    - tar -xzvf pthreads-w32-2-8-0-release.tar.gz
+    - cd pthreads-w32-2-8-0-release
+    - make clean GC
+  - you should see a pthreadGC2.dll
+
   64-bit:
   - Read http://www.cadforte.com/wiki/index.php/Pthreads
   - Obtain Pthreads source via CVS per instructions on
     - http://sourceware.org/pthreads-win32
   	* cvs -d :pserver:anoncvs@sourceware.org:/cvs/pthreads-win32 login
 	* enter 'anoncvs' for password
-	* cvs -d :pservers:anoncvs@sourceware.org:/cvs/pthreads-win32 checkout pthreads
+	* cvs -d :pservers:anoncvs@sourceware.org:/cvs/pthreads-win32 \
+        checkout pthreads
+
+  Renamed DLL: memcached_pthreadGC2.dll instead of pthreadGC2.dll
+  - follow the "32-bit, from source" instructions above.
+  - in the pthreads-w32-2-8-0-release directory...
+    - cd pthreads-w32-2-8-0-release
+    - make GC_DLL=memcached_pthreadGC2.dll memcached_pthreadGC2.dll
+  - you should see a memcached_pthreadGC2.dll
+    - cp memcached_pthreadGC2.dll /c/dev/memcached_win32/.
 
 - Libevent
 
@@ -105,7 +123,7 @@ will be a sibling to the memcached_win32 subdirectory.  That is, do...
 
   mkdir /c/dev/memcached_win32_deps
 
-Copy all the p*.h, *.a, *.lib, and *.dll files from pthreads*/**
+Copy all the p*.h files from pthreads*/**
 into the memcached_win32_deps subdirectory.
 
 Copy all the ev*.h, *.a, *.lib, and *.dll files from libevent*/**

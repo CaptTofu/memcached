@@ -22,7 +22,15 @@ memcached_cflags += -Iwin32 -DHAVE_CONFIG_H
 testapp_cflags := ${memcached_cflags}
 
 memcached_ldflags := -L../memcached_win32_deps
-memcached_ldflags += -lpthread -levent -lwsock32 -lws2_32
+memcached_ldflags += -levent
+memcached_ldflags += -lwsock32
+memcached_ldflags += -lws2_32
+memcached_ldflags += memcached_pthreadGC2.dll
+
+## since we have our own memcached_pthreadGC2.dll to avoid name conflicts,
+## we do not specify another -lpthread
+# memcached_ldflags += -lpthread
+
 testapp_ldflags := ${memcached_ldflags}
 
 %.o: %.c
