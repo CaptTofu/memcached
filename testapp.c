@@ -1,9 +1,6 @@
 /* -*- Mode: C; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 #undef NDEBUG
 #include <pthread.h>
-#include <stdbool.h>
-
-#ifndef __WIN32__
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
@@ -12,23 +9,13 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <signal.h>
-
-#else
-
-#include "win32.h"
-#include "sysexits.h"
-
-#endif
-
-/* unistd.h is here */
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <assert.h>
 #include <string.h>
+#include <unistd.h>
+#include <netinet/in.h>
 #include <fcntl.h>
 #include <ctype.h>
 
