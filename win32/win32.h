@@ -18,9 +18,6 @@
 #include <errno.h>
 #include <stdint.h>
 #include <process.h>
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include "ntservice.h"
 
 #define EWOULDBLOCK        EAGAIN
@@ -203,8 +200,5 @@ static inline void _set_errno(int err)
 {
     errno = err;
 }
-
-/* <netinet/in.h> */
-typedef uint16_t in_port_t;
 
 #endif
