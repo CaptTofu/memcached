@@ -105,7 +105,7 @@ int setgid(_uid_t gid);
 #endif // _CONFIG_H
 EOC
 
-write_file('config.h', $config_h);
+write_file('./win32/config.h', $config_h);
 
 sub write_file {
     my $file = shift;

@@ -6,7 +6,7 @@ CC := mingw32-gcc
 memcached_exe := memcached.exe
 #testapp_obj := testapp.exe
 
-all: ${memcached_exe}
+all: configh ${memcached_exe}
 
 memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
@@ -31,6 +31,9 @@ memcached_ldflags += memcached_pthreadGC2.dll
 # memcached_ldflags += -lpthread
 #testapp_ldflags := ${memcached_ldflags}
 
+configh: 
+	./win32/config.pl
+
 %.o: %.c
 	${CC} ${memcached_cflags} -MD -c $< -o $@
 
@@ -44,6 +47,7 @@ clean:
 	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_exe}
 	rm -rf memcached_win32
 	rm -rf memcached_win32*.tar.gz
+	rm -rf memcached_win32*.zip
 
 bdist: ${memcached_exe}
 	rm -rf memcached_win32
