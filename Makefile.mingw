@@ -12,6 +12,7 @@ memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
 memcached_objs += stats.o
 memcached_objs += win32/defs.o win32/ntservice.o win32/win32.o
+memcached_objs += win32/dlfcn.o
 #memcached_objs += testapp.o
 
 memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
