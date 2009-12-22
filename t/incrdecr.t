@@ -1,23 +1,13 @@
 #!/usr/bin/perl
 
 use strict;
-use Test::More tests => 23;
+use Test::More tests => 17;
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 use MemcachedTest;
 
 my $server = new_memcached();
 my $sock = $server->sock;
-
-# Bug 21
-print $sock "set bug21 0 0 19\r\n9223372036854775807\r\n";
-is(scalar <$sock>, "STORED\r\n", "stored text");
-print $sock "incr bug21 1\r\n";
-is(scalar <$sock>, "9223372036854775808\r\n", "bug21 incr 1");
-print $sock "incr bug21 1\r\n";
-is(scalar <$sock>, "9223372036854775809\r\n", "bug21 incr 2");
-print $sock "decr bug21 1\r\n";
-is(scalar <$sock>, "9223372036854775808\r\n", "bug21 decr");
 
 print $sock "set num 0 0 1\r\n1\r\n";
 is(scalar <$sock>, "STORED\r\n", "stored num");
@@ -58,14 +48,7 @@ is(scalar <$sock>, "NOT_FOUND\r\n", "can't decr bogus key");
 print $sock "decr incr 5\r\n";
 is(scalar <$sock>, "NOT_FOUND\r\n", "can't incr bogus key");
 
-print $sock "set bigincr 0 0 1\r\n0\r\n";
-is(scalar <$sock>, "STORED\r\n", "stored bigincr");
-print $sock "incr bigincr 18446744073709551610\r\n";
-is(scalar <$sock>, "18446744073709551610\r\n");
-
 print $sock "set text 0 0 2\r\nhi\r\n";
-is(scalar <$sock>, "STORED\r\n", "stored hi");
+is(scalar <$sock>, "STORED\r\n", "stored text");
 print $sock "incr text 1\r\n";
-is(scalar <$sock>,
-   "CLIENT_ERROR cannot increment or decrement non-numeric value\r\n",
-   "hi - 1 = 0");
+is(scalar <$sock>, "1\r\n", "hi - 1 = 0");
