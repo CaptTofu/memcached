@@ -498,6 +498,7 @@ void append_stat(const char *name, ADD_STAT add_stats, conn *c,
                  const char *fmt, ...) GNUC_FORMAT_PRINTF(4, 5);
 
 enum store_item_type store_item(item *item, int comm, conn *c);
+void init_check_stdin(struct event_base *base);
 
 #if HAVE_DROP_PRIVILEGES
 extern void drop_privileges(void);

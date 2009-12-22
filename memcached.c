@@ -4697,6 +4697,11 @@ int main (int argc, char **argv) {
     /* initialize main thread libevent instance */
     main_base = event_init();
 
+    // This will configure stdin checks if so configured
+    if (!do_daemonize) {
+        init_check_stdin(main_base);
+    }
+
     /* initialize other stuff */
     stats_init();
     assoc_init();

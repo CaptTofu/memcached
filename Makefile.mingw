@@ -11,9 +11,9 @@ all: configh ${memcached_exe}
 memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
 memcached_objs += stats.o
+memcached_objs += stdin_check.o
 memcached_objs += win32/defs.o win32/ntservice.o win32/win32.o
 memcached_objs += win32/dlfcn.o
-#memcached_objs += testapp.o
 
 memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
 memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
@@ -32,7 +32,7 @@ memcached_ldflags += memcached_pthreadGC2.dll
 # memcached_ldflags += -lpthread
 #testapp_ldflags := ${memcached_ldflags}
 
-configh: 
+configh:
 	./win32/config.pl
 
 %.o: %.c
