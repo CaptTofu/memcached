@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-use Test::More tests => 94;
+use Test::More tests => 17;
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 use MemcachedTest;
@@ -12,59 +12,37 @@ my $sock = $server->sock;
 
 ## Output looks like this:
 ##
-## STAT pid 22969
-## STAT uptime 13
-## STAT time 1259170891
-## STAT version 1.4.3
+## STAT pid 16293
+## STAT uptime 7
+## STAT time 1174419597
+## STAT version 1.2.1
 ## STAT pointer_size 32
-## STAT rusage_user 0.001198
-## STAT rusage_system 0.003523
-## STAT curr_connections 10
-## STAT total_connections 11
-## STAT connection_structures 11
+## STAT rusage_user 0.012998
+## STAT rusage_system 0.119981
+## STAT curr_items 0
+## STAT total_items 0
+## STAT bytes 0
+## STAT curr_connections 1
+## STAT total_connections 2
+## STAT connection_structures 2
 ## STAT cmd_get 0
 ## STAT cmd_set 0
-## STAT cmd_flush 0
 ## STAT get_hits 0
 ## STAT get_misses 0
-## STAT delete_misses 0
-## STAT delete_hits 0
-## STAT incr_misses 0
-## STAT incr_hits 0
-## STAT decr_misses 0
-## STAT decr_hits 0
-## STAT cas_misses 0
-## STAT cas_hits 0
-## STAT cas_badval 0
-## STAT auth_cmds 0
-## STAT auth_unknowns 0
+## STAT evictions 0
 ## STAT bytes_read 7
 ## STAT bytes_written 0
 ## STAT limit_maxbytes 67108864
-## STAT accepting_conns 1
-## STAT listen_disabled_num 0
-## STAT threads 4
-## STAT conn_yields 0
-## STAT bytes 0
-## STAT curr_items 0
-## STAT total_items 0
-## STAT evictions 0
-
-# note that auth stats are tested in auth specfic tests
-
 
 my $stats = mem_stats($sock);
 
 # Test number of keys
-is(scalar(keys(%$stats)), 37, "37 stats values");
+is(scalar(keys(%$stats)), 22, "22 stats values");
 
 # Test initial state
-foreach my $key (qw(curr_items total_items bytes cmd_get cmd_set get_hits evictions get_misses
-                 bytes_written delete_hits delete_misses incr_hits incr_misses decr_hits
-                 decr_misses listen_disabled_num)) {
+foreach my $key (qw(curr_items total_items bytes cmd_get cmd_set get_hits evictions get_misses bytes_written)) {
     is($stats->{$key}, 0, "initial $key is zero");
 }
-is($stats->{accepting_conns}, 1, "initial accepting_conns is one");
 
 # Do some operations
 

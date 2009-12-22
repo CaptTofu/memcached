@@ -3,10 +3,10 @@
 # Windows
 CC := mingw32-gcc
 
-memcached_obj := memcached.exe
+memcached_exe := memcached.exe
 #testapp_obj := testapp.exe
 
-all: ${memcached_obj}
+all: ${memcached_exe}
 
 memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
@@ -36,18 +36,18 @@ memcached_ldflags += memcached_pthreadGC2.dll
 
 -include ${memcached_objs:.o=.d}
 
-${memcached_obj}: ${memcached_objs}
-	${CC} -o ${memcached_obj} ${memcached_objs} ${memcached_ldflags}
+${memcached_exe}: ${memcached_objs}
+	${CC} -o ${memcached_exe} ${memcached_objs} ${memcached_ldflags}
 
 #rm -f ${testapp_objs:.o=.d} ${testapp_objs} ${testapp_obj}
 clean:
-	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_obj}
+	rm -f ${memcached_objs:.o=.d} ${memcached_objs} ${memcached_exe}
 	rm -rf memcached_win32
 	rm -rf memcached_win32*.tar.gz
 
-bdist: ${memcached_obj}
+bdist: ${memcached_exe}
 	rm -rf memcached_win32
 	mkdir memcached_win32
-	cp ${memcached_obj} memcached_win32
-	cp ../memcached_win32_deps/pthreadGC2.dll memcached_win32
-	tar -czvf memcached_win32-0.0.0.tar.gz memcached_win32
+	cp ${memcached_exe} memcached_win32
+	cp memcached_pthreadGC2.dll memcached_win32
+	tar -czvf memcached_win32-`git describe`.tar.gz memcached_win32
