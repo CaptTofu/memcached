@@ -152,3 +152,5 @@ Then...
 
   make -f Makefile.mingw
 
+Other goodies: Things that make development in Windows land more productive
+  - Dependency Walker (this is a great tool!) http://www.dependencywalker.com

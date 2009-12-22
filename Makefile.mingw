@@ -11,7 +11,7 @@ all: ${memcached_exe}
 memcached_objs := assoc.o cache.o globals.o hash.o items.o
 memcached_objs += memcached.o slabs.o thread.o util.o
 memcached_objs += stats.o
-memcached_objs += win32/dummy_defs.o win32/ntservice.o win32/win32.o
+memcached_objs += win32/defs.o win32/ntservice.o win32/win32.o
 #memcached_objs += testapp.o
 
 memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
@@ -51,3 +51,11 @@ bdist: ${memcached_exe}
 	cp ${memcached_exe} memcached_win32
 	cp memcached_pthreadGC2.dll memcached_win32
 	tar -czvf memcached_win32-`git describe`.tar.gz memcached_win32
+	rm -rf memcached_win32
+
+zdist: ${memcached_exe}
+	rm -rf memcached_win32
+	mkdir memcached_win32
+	cp ${memcached_exe} memcached_win32
+	cp memcached_pthreadGC2.dll memcached_win32
+	zip -r memcached_win32-`git describe`.zip memcached_win32
