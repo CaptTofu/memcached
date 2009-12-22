@@ -11,20 +11,24 @@ void* dlopen(const char* path, int mode) {
 }
 
 void* dlsym(void* handle, const char* symbol) {
-  (void*) GetProcAddress((HINSTANCE) handle, symbol);
+  FARPROC retval;
+  retval = GetProcAddress((HINSTANCE) handle, symbol);
+  return (void*) retval;
 }
 
 int dlclose(void* handle) {
   // dlclose returns zero on success.
   // FreeLibrary returns nonzero on success.
-  (int) (FreeLibrary((HINSTANCE) handle) != 0);
+  BOOL retval;
+  retval = FreeLibrary((HINSTANCE) handle);
+  return (int) (retval != 0);
 }
 
 static char dlerror_buf[200];
 
 const char *dlerror(void) {
   DWORD err = GetLastError();
-  sprintf(dlerror_buf, "%x", err);
+  sprintf(dlerror_buf, "%x", (unsigned int) err);
   return dlerror_buf;
 }
 
