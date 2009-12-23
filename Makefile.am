@@ -36,6 +36,10 @@ memcached_CPPFLAGS = -DNDEBUG
 memcached_debug_LDADD = @PROFILER_LDFLAGS@
 memcached_debug_CFLAGS = @PROFILER_FLAGS@
 
+if ENABLE_ISASL
+memcached_SOURCES += sasl_defs.c isasl.c
+endif
+
 memcached_LDADD =
 memcached_DEPENDENCIES =
 memcached_debug_DEPENDENCIES =

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "sasl_defs.h"
+
 static sasl_callback_t sasl_callbacks[] = {
     {
         SASL_CB_LIST_END, NULL, NULL

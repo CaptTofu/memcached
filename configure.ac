@@ -73,9 +73,13 @@ AC_PROG_INSTALL
 
 AC_ARG_ENABLE(sasl,
   [AS_HELP_STRING([--enable-sasl],[Enable SASL authentication])])
+AC_ARG_ENABLE(isasl,
+  [AS_HELP_STRING([--enable-isasl],[Enable internal SASL implementation])])
 
 AC_CHECK_HEADERS([sasl/sasl.h])
-if test "x$enable_sasl" = "xyes"; then
+if test "x$enable_isasl" = "xyes"; then
+  AC_DEFINE([ENABLE_ISASL],1,[Set to nonzero if you want to include ISASL])
+elif test "x$enable_sasl" = "xyes"; then
   AC_DEFINE([ENABLE_SASL],1,[Set to nonzero if you want to include SASL])
   AC_SEARCH_LIBS([sasl_server_init], [sasl2], [],
     [
@@ -109,10 +113,12 @@ fi
 AM_CONDITIONAL([BUILD_DTRACE],[test "$build_dtrace" = "yes"])
 AM_CONDITIONAL([DTRACE_INSTRUMENT_OBJ],[test "$dtrace_instrument_obj" = "yes"])
 AM_CONDITIONAL([ENABLE_SASL],[test "$enable_sasl" = "yes"])
+AM_CONDITIONAL([ENABLE_ISASL],[test "$enable_isasl" = "yes"])
 
 AC_SUBST(DTRACE)
 AC_SUBST(DTRACEFLAGS)
 AC_SUBST(ENABLE_SASL)
+AC_SUBST(ENABLE_ISASL)
 AC_SUBST(PROFILER_LDFLAGS)
 
 AC_ARG_ENABLE(coverage,
