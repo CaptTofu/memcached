@@ -288,6 +288,7 @@ void add_statistics(const void *cookie, ADD_STAT add_stats,
 
     if (prefix != NULL) {
         klen = snprintf(name, sizeof(name), "%s:", prefix);
+    }
 
     if (num != -1) {
         klen += snprintf(name + klen, sizeof(name) - klen, "%d:", num);

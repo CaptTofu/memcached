@@ -87,7 +87,6 @@ void continue_server(void);
 #define DONT_PREALLOC_SLABS
 #define MAX_NUMBER_OF_SLAB_CLASSES (POWER_LARGEST + 1)
 
-
 #define STAT_KEY_LEN 128
 #define STAT_VAL_LEN 128
 
@@ -163,6 +162,9 @@ struct slab_stats {
     uint64_t  delete_hits;
     uint64_t  cas_hits;
     uint64_t  cas_badval;
+    uint64_t  incr_hits;
+    uint64_t  decr_hits;
+
 };
 
 /**
@@ -403,7 +405,7 @@ void slab_stats_aggregate(struct thread_stats *stats, struct slab_stats *out);
 
 /* Stat processing functions */
 void append_stat(const char *name, ADD_STAT add_stats, conn *c,
-                 const char *fmt, ...) GNUC_FORMAT_PRINTF(4, 5);
+                 const char *fmt, ...);
 
 void notify_io_complete(const void *cookie, ENGINE_ERROR_CODE status);
 void drive_machine(conn *c);

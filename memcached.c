@@ -2695,11 +2695,10 @@ static inline void process_get_command(conn *c, token_t *tokens, size_t ntokens,
                     settings.engine.v1->release(settings.engine.v0, c, it);
                     return;
                   }
-                  *(c->suffixlist + i) = suffix;
-
-                  int suffix_len =
-                      sprintf(suffix, " %"PRIu64"\r\n",
-                              (unsigned long long)ITEM_get_cas(it));
+                  *(c->suffixlist + i) = cas;
+                  int cas_len = snprintf(cas, SUFFIX_SIZE,
+                                           " %"PRIu64"\r\n",
+                                           settings.engine.v1->item_get_cas(it));
 
                   if (add_iov(c, "VALUE ", 6) != 0 ||
                       add_iov(c, settings.engine.v1->item_get_key(it), it->nkey) != 0 ||
