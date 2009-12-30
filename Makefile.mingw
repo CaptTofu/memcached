@@ -51,16 +51,20 @@ clean:
 	rm -rf memcached_win32*.zip
 
 bdist: ${memcached_exe}
-	rm -rf memcached_win32
+	#rm -rf memcached_win32
+	rm -f memcached_win32/*
 	mkdir memcached_win32
 	cp ${memcached_exe} memcached_win32
 	cp memcached_pthreadGC2.dll memcached_win32
 	tar -czvf memcached_win32-`git describe`.tar.gz memcached_win32
-	rm -rf memcached_win32
+	#rm -rf memcached_win32
+	rm -f memcached_win32/*
 
 zdist: ${memcached_exe}
-	rm -rf memcached_win32
+	#rm -rf memcached_win32
+	rm -f memcached_win32/*
 	mkdir memcached_win32
 	cp ${memcached_exe} memcached_win32
 	cp memcached_pthreadGC2.dll memcached_win32
 	zip -r memcached_win32-`git describe`.zip memcached_win32
+	rm -f memcached_win32/*
