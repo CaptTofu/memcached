@@ -3,6 +3,7 @@
 
 use warnings;
 use strict;
+use lib qw(/c/mingw/lib/perl5/5.10.1);
 
 my $MEMC_VERSION= `git describe`;
 chomp $MEMC_VERSION;
