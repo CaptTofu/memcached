@@ -1,6 +1,7 @@
 /* ntservice.c
  *
  *  Copyright (c) 2006 Germán Méndez Bravo (Kronuz) <kronuz@users.sf.net>
+ *  Modifications 2009, Patrick Galbraith (patg@northscale.com)
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
