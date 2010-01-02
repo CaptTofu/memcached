@@ -68,7 +68,8 @@ zdist: ${memcached_exe}
 	rm -f memcached_win32/*
 
 zdistdos: ${memcached_exe}
-	md memcached_win32
+	del /F memcached_win32
+	mkdir memcached_win32
 	copy /Y ${memcached_exe} memcached_win32
 	copy /Y memcached_pthreadGC2.dll memcached_win32
 	zip -r memcached_win32-`git describe`.zip memcached_win32
