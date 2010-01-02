@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# If you think this is stupid/overkill, blame dormando
+# This file is to ensure that config.h is generated, especially version 
 
 use warnings;
 use strict;
