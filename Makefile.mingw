@@ -2,7 +2,7 @@
 #CC := i386-mingw32msvc-gcc
 # Windows
 CC := mingw32-gcc
-#PATH:=/c/mingw2/bin:$(PATH)
+PATH:=/c/mingw2/bin:$(PATH)
 
 memcached_exe := memcached.exe
 
