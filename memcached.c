@@ -1053,9 +1053,9 @@ static void complete_incr_bin(conn *c) {
             fprintf(stderr, "%c", key[i]);
         }
         fprintf(stderr, " %" PRIu64 ", %" PRIu64 ", %" PRIu64 "\n",
-                (unsigned long long)req->message.body.delta,
-                (unsigned long long)req->message.body.initial,
-                (unsigned long long)req->message.body.expiration);
+                (uint64_t)req->message.body.delta,
+                (uint64_t)req->message.body.initial,
+                (uint64_t)req->message.body.expiration);
     }
 
     ENGINE_ERROR_CODE ret;
