@@ -61,7 +61,7 @@ bdist: ${memcached_exe}
 	rm -f memcached_win32/*
 
 zdist: ${memcached_exe}
-	mkdir -m 755 memcached_win32
+	/c/mingw2/bin/mkdir.exe memcached_win32
 	cp ${memcached_exe} memcached_win32
 	cp memcached_pthreadGC2.dll memcached_win32
 	zip -r memcached_win32-`git describe`.zip memcached_win32
