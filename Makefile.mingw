@@ -2,6 +2,7 @@
 #CC := i386-mingw32msvc-gcc
 # Windows
 CC := mingw32-gcc
+PATH:=/c/mingw2/bin:$(PATH)
 
 memcached_exe := memcached.exe
 
@@ -61,7 +62,7 @@ bdist: ${memcached_exe}
 	rm -f memcached_win32/*
 
 zdist: ${memcached_exe}
-	/c/mingw2/bin/mkdir.exe memcached_win32
+	mkdir memcached_win32
 	cp ${memcached_exe} memcached_win32
 	cp memcached_pthreadGC2.dll memcached_win32
 	zip -r memcached_win32-`git describe`.zip memcached_win32
