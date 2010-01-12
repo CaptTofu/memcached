@@ -16,7 +16,7 @@ memcached_objs += sasl_defs.o isasl.o
 memcached_objs += win32/defs.o win32/ntservice.o win32/win32.o
 memcached_objs += win32/dlfcn.o
 
-memcached_cflags := -std=gnu99 -O2 -fno-strict-aliasing
+memcached_cflags := -std=gnu99 -O2 -DNDEBUG -fno-strict-aliasing
 memcached_cflags += -Wall -Werror -Wstrict-prototypes -Wmissing-prototypes
 memcached_cflags += -Wmissing-declarations -Wredundant-decls
 memcached_cflags += -I../memcached_win32_deps
