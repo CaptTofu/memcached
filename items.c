@@ -281,7 +281,9 @@ static void item_unlink_q(item *it) {
 int do_item_link(item *it) {
     MEMCACHED_ITEM_LINK(ITEM_key(it), it->nkey, it->nbytes);
     assert((it->it_flags & (ITEM_LINKED|ITEM_SLABBED)) == 0);
+#ifndef _WIN32__
     assert(it->nbytes < (1024 * 1024));  /* 1MB max size */
+#endif
     it->it_flags |= ITEM_LINKED;
     it->time = current_time;
     assoc_insert(it);
