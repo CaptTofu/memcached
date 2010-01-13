@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!perl.exe
 # This file is to ensure that config.h is generated, especially version 
 
 use warnings;
