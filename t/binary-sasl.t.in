@@ -7,21 +7,23 @@ use FindBin qw($Bin);
 use lib "$Bin/lib";
 use MemcachedTest;
 
-my $supports_sasl = supports_sasl();
+# our so END has access to the name
+# you must open the sasl database
+# well before isasl attempts to read it
+# this was a problem on Redhat systems
+our $sasldb = "/tmp/$$.isasldb";
 my $saslpasswd2 = '@SASLPASSWD2@';
-my $sasldb;
-my $expected_mechs = 'PLAIN';
+my ($testuser, $testpass) = ('testuser', 'testpass');
 
-# If sasl, then use saslpasswd
-unless ($saslpasswd2 eq "isasl") {
+my $supports_sasl = supports_sasl();
+my $expected_mechs = 'PLAIN';
+$ENV{'ISASL_PWFILE'} = $sasldb ;
+unless ($saslpasswd2 eq 'isasl') {
     $sasldb = '/tmp/test-memcached.sasldb';
     $expected_mechs = "CRAM-MD5 $expected_mechs";
 }
-# if isasl, use plain text file
-else {
-    $sasldb = '/tmp/isasl.txt';
-    $ENV{'ISASL_PWFILE'} = $sasldb;
-}
+unlink $sasldb if -e $sasldb;
+
 
 use Test::More;
 
@@ -31,8 +33,15 @@ if (supports_sasl()) {
     }
     else {
        plan tests => 25;
+       unless ($saslpasswd2 eq "isasl") {
+           system("echo $testpass | $saslpasswd2 -a memcached -f $sasldb -c -p $testuser");
+       }
+       else {
+           system("echo $testuser $testpass > $sasldb");
+       }
     }
-} else {
+}
+else {
     plan tests => 1;
     eval {
         my $server = new_memcached("-S");
@@ -40,6 +49,7 @@ if (supports_sasl()) {
     ok($@, "Died with illegal -S args when SASL is not supported.");
     exit 0;
 }
+
 
 eval {
     my $server = new_memcached("-S -B auto");
@@ -106,7 +116,7 @@ use constant RES_MAGIC        => 0x81;
 my $pwd=getcwd;
 $ENV{'SASL_CONF_PATH'} = "$pwd/t/sasl";
 
-my $server = new_memcached('-B binary -S ');
+my $server = new_memcached('-B binary -S');
 
 my $mc = MC::Client->new;
 
@@ -188,17 +198,6 @@ $empty->('x');
 }
 $empty->('x');
 
-unlink $sasldb;
-my ($testuser, $testpass) = ('testuser', 'testpass');
-unless ($saslpasswd2 eq "isasl") {
-    system("echo $testpass | $saslpasswd2 -a memcached -f $sasldb -c -p $testuser");
-}
-else {
-    my $isasl_fh;
-    open($isasl_fh, ">$sasldb") or die "unable to open $sasldb\n";
-    print $isasl_fh "$testuser $testpass";
-    close($isasl_fh);
-}
 
 $mc = MC::Client->new;
 
@@ -384,6 +383,8 @@ sub _handle_single_response {
         my $found = length($rv);
         die("Expected $remaining bytes, got $found");
     }
+
+    print "ident_hi $ident_hi ident_log $ident_lo\n";
 
     my $cas = ($ident_hi * 2 ** 32) + $ident_lo;
 
@@ -632,7 +633,9 @@ sub auth_error {
     return $self->[0] == ERR_AUTH_ERROR;
 }
 
-unlink $sasldb;
+#END {
+#   unlink $sasldb if -e $sasldb;
+#}
 
 # vim: filetype=perl
 
